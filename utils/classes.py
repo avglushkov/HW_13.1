@@ -3,17 +3,20 @@ class Category:
     category_discription: str
     category_products: list
     number_of_categories = 0
+    category_products_amount = 0
 
 
     def __init__(self, category_name, category_discription, category_products):
         self.category_name = category_name
         self.category_discription = category_discription
         self.category_products = category_products
-        self.number_of_categories += 1
+        Category.number_of_categories += 1
+        Category.category_products_amount += len(self.category_products)
 
 
 category1 = Category('Ножи', 'Разные ножи', ['Столовые', 'Финки'])
 category2 = Category('Кастрюли', 'Разные кастрюли', ['2 литра', '3 литра'])
+category3 = Category('Сковороды', 'Разные сковороды', ['22 см', '24 см', '28 см'])
 class Product:
     product_name: str
     product_description: str
@@ -27,5 +30,5 @@ class Product:
         self.product_amount = product_amount
 
 
-print(category1.number_of_categories)
-print(category2.number_of_categories)
+print(Category.number_of_categories)
+print(Category.category_products_amount)
