@@ -1,4 +1,5 @@
 class Category:
+    """Класс объекта Category"""
     category_name: str
     category_discription: str
     category_products: list
@@ -10,11 +11,11 @@ class Category:
         self.category_name = category_name
         self.category_discription = category_discription
         self.category_products = category_products
-        Category.categories_amount += 1
-        Category.category_products_amount += len(self.category_products)
-
+        Category.categories_amount += 1 # количество экземпляров в классе категорий
+        Category.category_products_amount += len(self.category_products) # количество уникальных продуктов во всех категориях товаров
 
 class Product:
+    """Задаем класс Product"""
     product_name: str
     product_description: str
     product_price: float
