@@ -1,8 +1,9 @@
 class Category:
+    """Класс объекта Category"""
     category_name: str
     category_discription: str
     category_products: list
-    number_of_categories = 0
+    categories_amount = 0
     category_products_amount = 0
 
 
@@ -10,14 +11,11 @@ class Category:
         self.category_name = category_name
         self.category_discription = category_discription
         self.category_products = category_products
-        Category.number_of_categories += 1
-        Category.category_products_amount += len(self.category_products)
+        Category.categories_amount += 1 # количество экземпляров в классе категорий
+        Category.category_products_amount += len(self.category_products) # количество уникальных продуктов во всех категориях товаров
 
-
-category1 = Category('Ножи', 'Разные ножи', ['Столовые', 'Финки'])
-category2 = Category('Кастрюли', 'Разные кастрюли', ['2 литра', '3 литра'])
-category3 = Category('Сковороды', 'Разные сковороды', ['22 см', '24 см', '28 см'])
 class Product:
+    """Задаем класс Product"""
     product_name: str
     product_description: str
     product_price: float
@@ -30,5 +28,3 @@ class Product:
         self.product_amount = product_amount
 
 
-print(Category.number_of_categories)
-print(Category.category_products_amount)
