@@ -15,6 +15,7 @@ class Category:
         Category.category_products_amount += len(self._category_products) # количество уникальных продуктов во всех категориях товаров
 
 
+
     def add_product(self, product):
         """метод, который принимает на вход объект товара и добавлять его в список"""
 
@@ -48,6 +49,12 @@ class Product:
         self.product_description = product_description
         self.product_price = product_price
         self.product_amount = product_amount
+
+
+    def __str__(self):
+
+        return f'{self.product_name} {self.product_price}руб. Остаток: {self.product_amount} шт.'
+
 
     @classmethod
     def add_new_product(cls, product):
@@ -88,6 +95,6 @@ class Product:
         else:
             print("Введеная цена некорректна")
 
-# test_product = Product('Нож', 'просто нож', 999.0, 4)
-# print(test_product.price)
-# test_product.price = 900
+ # test_product = Product('Нож', 'просто нож', 999.0, 4)
+ # print(test_product.product_price)
+

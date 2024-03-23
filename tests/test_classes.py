@@ -1,4 +1,4 @@
-from utils.classes import Category, Product
+from src.utils.classes import Category, Product
 
 import pytest
 
@@ -24,7 +24,7 @@ def test_categories(categories):
     assert Category.categories_amount == 3 # Проверка расчета количества экземпляров класса
     assert Category.category_products_amount == 8 # Проверка корректности расчета количества уникальныех продуктов
 
-.@pytest.fixture()
+@pytest.fixture()
 def tst_products():
     """Задаем тестовые данные"""
 

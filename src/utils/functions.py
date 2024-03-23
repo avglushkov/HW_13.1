@@ -1,8 +1,8 @@
 from pathlib import Path
-from utils.classes import Category, Product
+from src.utils.classes import Category, Product
 import json
 
-data_folder = Path('/home/avgl/Projects/ecom_project/data')
+data_folder = Path('/data')
 sourse_file = data_folder / 'products.json'
 def products_data():
     """чтение данных о продуктах из json файла """

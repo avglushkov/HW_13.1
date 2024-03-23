@@ -1,4 +1,4 @@
-from utils.functions import get_product, get_category
+from src.utils.functions import get_product, get_category
 import pytest
 
 @pytest.fixture()
