@@ -20,11 +20,11 @@ def test_get_category(products):
 
     assert category_1.category_name == 'Смартфоны'
     assert category_1.category_discription == 'Смартфоны, как средство не только коммуникации, но и получение дополнительных функций для удобства жизни'
-    assert category_1.category_products[0] == {'name': 'Samsung Galaxy C23 Ultra', 'description': '256GB, Серый цвет, 200MP камера', 'price': 180000.0, 'quantity': 5}
+    assert category_1._category_products[0] == {'name': 'Samsung Galaxy C23 Ultra', 'description': '256GB, Серый цвет, 200MP камера', 'price': 180000.0, 'quantity': 5}
 
     assert category_2.category_name == 'Категория отсутствует'
     assert category_2.category_discription == '-'
-    assert category_2.category_products == []
+    assert category_2._category_products == []
 
 def test_get_product(products):
     """Проверяем корректность фкнции get_product"""
