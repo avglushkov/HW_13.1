@@ -28,10 +28,11 @@ class Category:
     def get_products(self):
         """метод, который выводит список товаров в формате "Продукт, 80 руб.Остаток: 15  шт." """
         products = []
-        for product in self._category_products:
-            if product not in products:
-                products.append(f'Продукт {product['product_name']} {product['product_price']}руб. Остаток: {product['product_amount']} шт.')
+        for position in self._category_products:
+            product = Product(position['product_name'], position['product_description'], position['product_price'], position['product_amount'])
+            products.append(f'Продукт {product.product_name} {product.product_price}руб. Остаток: {product.product_amount} шт.')
         return products
+
 
 
 
