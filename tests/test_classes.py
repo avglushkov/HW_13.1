@@ -35,19 +35,25 @@ def tst_products():
             {'category_name': 'Телевизоры', 'category_description': 'Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником',
              'category_products': [{'product_name': '55" QLED 4K', 'product_description': 'Фоновая подсветка', 'product_price': 123000.0, 'product_amount': 7}]}]
 
-def test_get_products(tst_products):
-    """Проверка метода вывода вывода списка продуктов в нужном формате"""
-    tst_category = Category(tst_products[0]['category_name'], tst_products[0]['category_description'], tst_products[0]['category_products'])
 
-    assert tst_category.get_products[0] == 'Продукт Samsung Galaxy C23 Ultra 180000.0руб. Остаток: 5 шт.'
-    assert tst_category.get_products[1] == 'Продукт Iphone 15 210000.0руб. Остаток: 8 шт.'
-    assert tst_category.get_products[2] == 'Продукт Xiaomi Redmi Note 11 31000.0руб. Остаток: 14 шт.'
 def test_Product_str(tst_products):
     """Проверка корректности вывода строкового отображения категории продуктов"""
 
     tst_category = Category(tst_products[0]['category_name'], tst_products[0]['category_description'], tst_products[0]['category_products'])
 
     assert tst_category.__str__() == 'Продукты категории Смартфоны, количество продуктов 3 шт.'
+
+@pytest.fixture()
+def tst_category_products():
+    return Category(" "," ",
+                        [Product('Samsung Galaxy C23 Ultra', '256GB, Серый цвет, 200MP камера', 180000.0, 5),
+                         Product('Samsung Galaxy C23', '256GB, Серый цвет, 200MP камера', 100000.0, 6)])
+
+def test_get_products(tst_category_products):
+    """Проверка метода вывода вывода списка продуктов в нужном формате"""
+
+    assert tst_category_products.get_products == ['Продукт Samsung Galaxy C23 Ultra, 180000.0 руб. Остаток: 5 шт.','Продукт Samsung Galaxy C23, 100000.0 руб. Остаток: 6 шт.']
+
 
 @pytest.fixture()
 def product1():

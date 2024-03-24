@@ -1,45 +1,3 @@
-class Category:
-    """Класс объекта Category"""
-    category_name: str
-    category_discription: str
-    category_products: list
-    categories_amount = 0
-    category_products_amount = 0
-
-
-    def __init__(self, category_name, category_discription, category_products):
-        self.category_name = category_name
-        self.category_discription = category_discription
-        self._category_products = category_products
-        Category.categories_amount += 1 # количество экземпляров в классе категорий
-        Category.category_products_amount += len(self._category_products) # количество уникальных продуктов во всех категориях товаров
-
-    def add_product(self, product):
-        """
-        метод, который принимает на вход объект товара и добавлять его в список
-        """
-
-        if product not in self._category_products:
-            self._category_products.append(product)
-        return self._category_products
-
-    def __str__(self):
-        """
-        Строковое отображение в виде: Название категории, количество продуктов: 200 шт
-        """
-
-        return f'Продукты категории {self.category_name}, количество продуктов {len(self._category_products)} шт.'
-
-
-    @property
-    def get_products(self):
-        """метод, который выводит список товаров в формате "Продукт, 80 руб.Остаток: 15  шт." """
-        products = []
-        for position in self._category_products:
-            product = Product(position['product_name'], position['product_description'], position['product_price'], position['product_amount'])
-            products.append(f'Продукт {product.product_name} {product.product_price}руб. Остаток: {product.product_amount} шт.')
-        return products
-
 class Product:
     """Задаем класс Product"""
     product_name: str
@@ -120,6 +78,50 @@ class Product:
                 print('Цена не изменилась')
         else:
             print("Введеная цена некорректна")
+
+
+class Category:
+    """Класс объекта Category"""
+    category_name: str
+    category_discription: str
+    category_products: list
+    categories_amount = 0
+    category_products_amount = 0
+
+
+
+    def __init__(self, category_name, category_discription, category_products):
+        self.category_name = category_name
+        self.category_discription = category_discription
+        self._category_products = category_products
+        Category.categories_amount += 1 # количество экземпляров в классе категорий
+        Category.category_products_amount += len(self._category_products) # количество уникальных продуктов во всех категориях товаров
+
+    def add_product(self, product: Product) -> list[Product]:
+        """
+        метод, который принимает на вход объект товара и добавлять его в список
+        """
+
+        if product not in self._category_products:
+            self._category_products.append(product)
+        return self._category_products
+
+    def __str__(self):
+        """
+        Строковое отображение в виде: Название категории, количество продуктов: 200 шт
+        """
+
+        return f'Продукты категории {self.category_name}, количество продуктов {len(self._category_products)} шт.'
+
+
+    @property
+    def get_products(self):
+        """метод, который выводит список товаров в формате "Продукт, 80 руб.Остаток: 15  шт." """
+        products = []
+        for product in self._category_products:
+            if product not in products:
+                products.append(str(product))
+        return products
 
 
 class ProdItereation:
