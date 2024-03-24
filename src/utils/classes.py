@@ -14,14 +14,21 @@ class Category:
         Category.categories_amount += 1 # количество экземпляров в классе категорий
         Category.category_products_amount += len(self._category_products) # количество уникальных продуктов во всех категориях товаров
 
-
-
     def add_product(self, product):
-        """метод, который принимает на вход объект товара и добавлять его в список"""
+        """
+        метод, который принимает на вход объект товара и добавлять его в список
+        """
 
         if product not in self._category_products:
             self._category_products.append(product)
         return self._category_products
+
+    def __str__(self):
+        """
+        Строковое отображение в виде: Название категории, количество продуктов: 200 шт
+        """
+
+        return f'Продукты категории {self.category_name}, количество продуктов {len(self._category_products)} шт.'
 
 
     @property
@@ -32,9 +39,6 @@ class Category:
             product = Product(position['product_name'], position['product_description'], position['product_price'], position['product_amount'])
             products.append(f'Продукт {product.product_name} {product.product_price}руб. Остаток: {product.product_amount} шт.')
         return products
-
-
-
 
 class Product:
     """Задаем класс Product"""
@@ -53,16 +57,31 @@ class Product:
 
 
     def __str__(self):
+        """
+        строковое отображение в виде: Название продукта, 80 руб. Остаток: 15 шт.
+        """
 
-        return f'{self.product_name} {self.product_price}руб. Остаток: {self.product_amount} шт.'
+        return f'Продукт {self.product_name}, {self.product_price} руб. Остаток: {self.product_amount} шт.'
+
+    def __add__(self, other):
+        """
+        возможность складывать объекты между собой таким образом,
+        чтобы результат выполнения сложения двух продуктов был сложением
+        сумм, умноженных на количество на складе
+        """
+
+        return (self.product_price * self.product_amount + other.product_price * other.product_amount)
 
 
     @classmethod
     def add_new_product(cls, product):
-        """метод, который создает товар и возвращает объект, который можно добавлять в список товаров.
-        Добавлена проверка наличия такого же товара, схожего по имени.
-        В случае если товар уже существует, добавляется количество в наличии старого товара и нового.
-        При конфликте цен выбрается более высокая. """
+        """
+        метод, который создает товар и возвращает объект, который
+        можно добавлять в список товаров. Добавлена проверка наличия
+        такого же товара, схожего по имени.В случае если товар уже
+        существует, добавляется количество в наличии старого товара и нового.
+        При конфликте цен выбрается более высокая.
+        """
 
         new_product = cls(product["product_name"], product["product_description"], product["product_price"], product["product_amount"])
 
@@ -77,12 +96,18 @@ class Product:
 
     @property
     def price(self):
-        """Геттер для получения цены товара"""
+        """
+        Геттер для получения цены товара
+        """
         return self.product_price
 
     @price.setter
     def price(self, new_price):
-        """Сеттер для установки новой цены товара с проверками корректности и разницы текущей и новой цены и подтверждением выбора новой цены"""
+        """
+        Сеттер для установки новой цены товара с проверками
+        корректности и разницы текущей и новой цены и
+        подтверждением выбора новой цены
+        """
 
         if new_price > 0:
             if new_price >= self.product_price:
@@ -96,6 +121,29 @@ class Product:
         else:
             print("Введеная цена некорректна")
 
- # test_product = Product('Нож', 'просто нож', 999.0, 4)
- # print(test_product.product_price)
 
+class ProdItereation:
+
+    category: list
+    def __init__(self, category):
+        self.category = category
+
+    def __iter__(self):
+        """
+        Магический метод, который создает объект для итераций
+        """
+        self.current_value = -1
+        return self
+
+    def __next__(self):
+        """
+        Магический метод, который возвращает очередной элемент
+        при выполнении итерации
+        """
+
+        if self.current_value + 1 < len(self.category):
+            self.current_value += 1
+
+            return self.category[self.current_value]
+        else:
+            raise StopIteration
