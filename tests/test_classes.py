@@ -1,4 +1,4 @@
-from src.utils.classes import Category, Product
+from src.utils.classes import Category, Product, ProdItereation
 
 import pytest
 
@@ -35,13 +35,24 @@ def tst_products():
             {'category_name': 'Телевизоры', 'category_description': 'Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником',
              'category_products': [{'product_name': '55" QLED 4K', 'product_description': 'Фоновая подсветка', 'product_price': 123000.0, 'product_amount': 7}]}]
 
-def test_get_products(tst_products):
-    """Проверка метода вывода вывода списка продуктов в нужном формате"""
+
+def test_Product_str(tst_products):
+    """Проверка корректности вывода строкового отображения категории продуктов"""
+
     tst_category = Category(tst_products[0]['category_name'], tst_products[0]['category_description'], tst_products[0]['category_products'])
 
-    assert tst_category.get_products[0] == 'Продукт Samsung Galaxy C23 Ultra 180000.0руб. Остаток: 5 шт.'
-    assert tst_category.get_products[1] == 'Продукт Iphone 15 210000.0руб. Остаток: 8 шт.'
-    assert tst_category.get_products[2] == 'Продукт Xiaomi Redmi Note 11 31000.0руб. Остаток: 14 шт.'
+    assert tst_category.__str__() == 'Продукты категории Смартфоны, количество продуктов 3 шт.'
+
+@pytest.fixture()
+def tst_category_products():
+    return Category(" "," ",
+                        [Product('Samsung Galaxy C23 Ultra', '256GB, Серый цвет, 200MP камера', 180000.0, 5),
+                         Product('Samsung Galaxy C23', '256GB, Серый цвет, 200MP камера', 100000.0, 6)])
+
+def test_get_products(tst_category_products):
+    """Проверка метода вывода вывода списка продуктов в нужном формате"""
+
+    assert tst_category_products.get_products == ['Продукт Samsung Galaxy C23 Ultra, 180000.0 руб. Остаток: 5 шт.','Продукт Samsung Galaxy C23, 100000.0 руб. Остаток: 6 шт.']
 
 
 @pytest.fixture()
@@ -49,6 +60,17 @@ def product1():
     """Задаем данные для проверки атрибутов класса Products"""
     return Product('Нож', 'нож из стали', 2400.78, 16)
 
+def test_Product_str(product1):
+    """Проверка корректности вывода строкового отображения продука"""
+
+    assert product1.__str__() == 'Продукт Нож, 2400.78 руб. Остаток: 16 шт.'
+def test_Product_add():
+    """Проверка корректности возможности сложения двух продуктов"""
+
+    prod1 = Product('Iphone 15', '512GB, Gray space', 210_000.0, 1)
+    prod2 = Product('Xiaomi Redmi Note 11', '1024GB, Синий', 31_000.0, 2)
+
+    assert (prod1 + prod2) == 272000.0
 
 def test_products(product1):
     """Тестируем корректность атрибутов класса Products"""
@@ -77,3 +99,17 @@ def test_price(product1):
 
     product1.price = -1
     assert product1.price == 2500
+
+@pytest.fixture()
+def prod_iteration():
+    return ProdItereation(["Ножи", "Кастрюли", "Сковороды", "Ложки"])
+
+def test_ProdItereation(prod_iteration):
+    products = []
+
+    assert prod_iteration.category == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
+
+    for i in prod_iteration:
+        products.append(i)
+
+    assert products == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
