@@ -1,4 +1,4 @@
-from src.utils.classes import Category, Product, ProdItereation
+from src.utils.classes import Category, Product, ProdItereation, Grass, Smartphone
 
 import pytest
 
@@ -69,8 +69,14 @@ def test_Product_add():
 
     prod1 = Product('Iphone 15', '512GB, Gray space', 210_000.0, 1)
     prod2 = Product('Xiaomi Redmi Note 11', '1024GB, Синий', 31_000.0, 2)
+    grass1 = Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 1000, 'Изумруд', 'Россия', '1 месяц')
+    grass2 = Grass('Трава2', 'газонная трава, цена за квадратный метр', 9.0, 1300, 'Изумруд', 'Россия', '1 месяц')
+    phone1 = Smartphone('IPhone', 'new Iphone 15 Pro', 100_000.0, 1, 'Iphone 15 Pro', 'titan white', 200, '256')
+    phone2 = Smartphone('Galaxy 23 Ultra', 'new Samsung Phone', 105_000.0, 1, 'Galaxy 23 Ultra', 'black', 300, '512')
 
     assert (prod1 + prod2) == 272000.0
+    assert (grass1 + grass2) == 18700.0
+    assert (phone1 + phone2) == 205_000.0
 
 def test_products(product1):
     """Тестируем корректность атрибутов класса Products"""
@@ -90,6 +96,25 @@ def test_add_new_product(product1):
     assert new_product.product_description == 'нож из стали'
     assert new_product.product_price == 2500.78
     assert new_product.product_amount == 33
+
+@pytest.fixture()
+def tst_product_category():
+    return Category('Колеса',
+                    'Колеса для легковых авто',
+                    [Product('Pirelli', "итальянские колеса", 10_000.0, 24),
+                     Product("Кама", "Наши колеса", 1_500.0, 4)])
+
+def test_add_product_exeption(tst_product_category):
+    """проверка ошибки добавления некорректного экземпляра"""
+
+    tst_cat = tst_product_category
+
+    with pytest.raises(ValueError):
+        tst_cat.add_product("какой то продукт")
+
+    """проверка корректности добавления в категорию продукта наследованного класса"""
+
+    assert str(tst_product_category.add_product(Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 1000, 'Изумруд', 'Россия', '1 месяц'))[2]) == 'Продукт Трава1, 7.0 руб. Остаток: 1000 шт.'
 
 def test_price(product1):
     """проверяем корректность работы сеттера price для класса Product"""
@@ -113,3 +138,26 @@ def test_ProdItereation(prod_iteration):
         products.append(i)
 
     assert products == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
+
+@pytest.fixture()
+
+def tst_grass():
+    return Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 1000, 'Изумруд', 'Россия', '1 месяц')
+
+def test_grass(tst_grass):
+    """Проверка атрибутов класса Grass"""
+
+    assert tst_grass.country == 'Россия'
+    assert tst_grass.germination_period == '1 месяц'
+    assert tst_grass.color == 'Изумруд'
+
+@pytest.fixture()
+def tst_phone():
+    return Smartphone('IPhone', 'new Iphone 15 Pro', 100_000.0, 1, 'Iphone 15 Pro', 'titan white', 200, '256')
+def test_phone(tst_phone):
+    """Проверка атрибутов класса Phone"""
+
+    assert tst_phone.model == 'Iphone 15 Pro'
+    assert tst_phone.performance == 200
+    assert tst_phone.color == 'titan white'
+    assert tst_phone.ram_on_board == '256'

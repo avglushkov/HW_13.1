@@ -27,8 +27,15 @@ class Product:
         чтобы результат выполнения сложения двух продуктов был сложением
         сумм, умноженных на количество на складе
         """
+        prod_class = type(self)
+        other_prod_class = type(other)
 
-        return (self.product_price * self.product_amount + other.product_price * other.product_amount)
+        if prod_class == other_prod_class:
+            return (self.product_price * self.product_amount + other.product_price * other.product_amount)
+
+        else:
+            raise ValueError('Вы пытаетесь сложить товары разных классов')
+
 
 
     @classmethod
@@ -79,6 +86,30 @@ class Product:
         else:
             print("Введеная цена некорректна")
 
+class Smartphone(Product):
+
+    """Класс Смартфон. Дочерний класс класса Product"""
+
+    def __init__(self, product_name, product_description, product_price, product_ammount, model, color, performance, ram_on_board):
+        super().__init__(product_name, product_description, product_price, product_ammount)
+        self.model = model
+        self.color = color
+        self.performance = performance
+        self.ram_on_board = ram_on_board
+
+class Grass(Product):
+    """Класс Газонная трова. Дочерний класс класса Product"""
+    color: str
+    country: str
+    germination_period: str
+
+    def __init__(self, product_name, product_description, product_price, product_ammount, color, country, germination_period):
+        super().__init__(product_name, product_description, product_price, product_ammount)
+        self.color = color
+        self.country = country
+        self.germination_period = germination_period
+
+
 
 class Category:
     """Класс объекта Category"""
@@ -88,8 +119,6 @@ class Category:
     categories_amount = 0
     category_products_amount = 0
 
-
-
     def __init__(self, category_name, category_discription, category_products):
         self.category_name = category_name
         self.category_discription = category_discription
@@ -97,15 +126,17 @@ class Category:
         Category.categories_amount += 1 # количество экземпляров в классе категорий
         Category.category_products_amount += len(self._category_products) # количество уникальных продуктов во всех категориях товаров
 
-    def add_product(self, product: Product) -> list[Product]:
+    def add_product(self, product) -> list[Product]:
         """
         метод, который принимает на вход объект товара и добавлять его в список
         """
-
-        if product not in self._category_products:
-            self._category_products.append(product)
-        return self._category_products
-
+        if issubclass(type(product), Product):
+#        if isinstance(product, Product):
+            if product not in self._category_products:
+                self._category_products.append(product)
+            return self._category_products
+        else:
+            raise ValueError('Добавляемый объект не является экземпляром класса Product или его наследником')
     def __str__(self):
         """
         Строковое отображение в виде: Название категории, количество продуктов: 200 шт
@@ -116,12 +147,15 @@ class Category:
 
     @property
     def get_products(self):
-        """метод, который выводит список товаров в формате "Продукт, 80 руб.Остаток: 15  шт." """
+        """
+        метод, который выводит список товаров в формате "Продукт, 80 руб.Остаток: 15  шт."
+        """
         products = []
         for product in self._category_products:
             if product not in products:
                 products.append(str(product))
         return products
+
 
 
 class ProdItereation:
@@ -149,3 +183,4 @@ class ProdItereation:
             return self.category[self.current_value]
         else:
             raise StopIteration
+
