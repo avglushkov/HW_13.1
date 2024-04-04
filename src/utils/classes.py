@@ -1,5 +1,20 @@
-class Product:
-    """Задаем класс Product"""
+from abc import ABC, abstractmethod
+
+class Abs_product(ABC):
+    """ Абстрактный класс для одъектов класса Product и его наследников """
+    @abstractmethod
+    def __init__(self):
+        pass
+
+class MixinLog:
+    """ Класс миксинов для вывода данных об экземплярах класса продукт и его наследников с их параметрами """
+
+    def __repr__(self):
+
+        return (f"Объект класса  {self.__class__.__name__}: {self.product_name}, {self.product_description}, цена: {self.product_price} руб., количество: {self.product_amount}")
+
+class Product(Abs_product, MixinLog):
+    """ Задаем класс Product """
     product_name: str
     product_description: str
     product_price: float
@@ -40,13 +55,9 @@ class Product:
 
     @classmethod
     def add_new_product(cls, product):
-        """
-        метод, который создает товар и возвращает объект, который
-        можно добавлять в список товаров. Добавлена проверка наличия
-        такого же товара, схожего по имени.В случае если товар уже
-        существует, добавляется количество в наличии старого товара и нового.
-        При конфликте цен выбрается более высокая.
-        """
+        """ метод, который создает товар и возвращает объект, который можно добавлять в список товаров. Добавлена проверка наличия
+        такого же товара, схожего по имени.В случае если товар уже существует, добавляется количество в наличии старого товара и нового.
+        При конфликте цен выбрается более высокая."""
 
         new_product = cls(product["product_name"], product["product_description"], product["product_price"], product["product_amount"])
 
@@ -61,18 +72,13 @@ class Product:
 
     @property
     def price(self):
-        """
-        Геттер для получения цены товара
-        """
+        """ Геттер для получения цены товара """
         return self.product_price
 
     @price.setter
     def price(self, new_price):
-        """
-        Сеттер для установки новой цены товара с проверками
-        корректности и разницы текущей и новой цены и
-        подтверждением выбора новой цены
-        """
+        """ Сеттер для установки новой цены товара с проверками корректности и разницы текущей и новой цены и
+        подтверждением выбора новой цены """
 
         if new_price > 0:
             if new_price >= self.product_price:
@@ -86,7 +92,7 @@ class Product:
         else:
             print("Введеная цена некорректна")
 
-class Smartphone(Product):
+class Smartphone(Product, MixinLog):
 
     """Класс Смартфон. Дочерний класс класса Product"""
 
@@ -97,7 +103,7 @@ class Smartphone(Product):
         self.performance = performance
         self.ram_on_board = ram_on_board
 
-class Grass(Product):
+class Grass(Product, MixinLog):
     """Класс Газонная трова. Дочерний класс класса Product"""
     color: str
     country: str
@@ -110,9 +116,13 @@ class Grass(Product):
         self.germination_period = germination_period
 
 
+class Abs_Category(ABC):
+    """ Абстрактный класс для классов Category и Order """
+    def __init__(self):
+        pass
 
-class Category:
-    """Класс объекта Category"""
+class Category(Abs_Category):
+    """ Класс объекта Category """
     category_name: str
     category_discription: str
     category_products: list
@@ -138,23 +148,36 @@ class Category:
         else:
             raise ValueError('Добавляемый объект не является экземпляром класса Product или его наследником')
     def __str__(self):
-        """
-        Строковое отображение в виде: Название категории, количество продуктов: 200 шт
-        """
+        """ Строковое отображение в виде: Название категории, количество продуктов: 200 шт """
 
         return f'Продукты категории {self.category_name}, количество продуктов {len(self._category_products)} шт.'
 
 
     @property
     def get_products(self):
-        """
-        метод, который выводит список товаров в формате "Продукт, 80 руб.Остаток: 15  шт."
-        """
+        """ метод, который выводит список товаров в формате "Продукт, 80 руб.Остаток: 15  шт." """
         products = []
         for product in self._category_products:
             if product not in products:
                 products.append(str(product))
         return products
+
+class Order(Abs_Category):
+    """Класс Заказа"""
+
+    order_product: str
+    order_product_amount: int
+    order_product_price: float
+    order_product_summ: float
+
+    def __init__(self, order_product, order_product_amount, order_product_price):
+
+        self.order_product = order_product
+        self.order_product_amount = order_product_amount
+        self.order_product_price = order_product_price
+        self.order_product_summ = order_product_price * order_product_amount
+
+
 
 
 

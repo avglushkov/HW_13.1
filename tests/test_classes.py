@@ -1,4 +1,4 @@
-from src.utils.classes import Category, Product, ProdItereation, Grass, Smartphone
+from src.utils.classes import Category, Product, ProdItereation, Grass, Smartphone, Order
 
 import pytest
 
@@ -24,9 +24,14 @@ def test_categories(categories):
     assert Category.categories_amount == 3 # Проверка расчета количества экземпляров класса
     assert Category.category_products_amount == 8 # Проверка корректности расчета количества уникальныех продуктов
 
+def test_order():
+    """проверка корректности атрибутов класса Order"""
+    prod1 = Order('Нож', 10.0, 34)
+    assert prod1.order_product_summ == 340.0
+
 @pytest.fixture()
 def tst_products():
-    """Задаем тестовые данные"""
+    """Задаем тестовые данные - список продуктов"""
 
     return [{'category_name': 'Смартфоны', 'category_description': 'Смартфоны, как средство не только коммуникации, но и получение дополнительных функций для удобства жизни',
              'category_products': [{'product_name': 'Samsung Galaxy C23 Ultra', 'product_description': '256GB, Серый цвет, 200MP камера', 'product_price': 180000.0, 'product_amount': 5},
@@ -161,3 +166,20 @@ def test_phone(tst_phone):
     assert tst_phone.performance == 200
     assert tst_phone.color == 'titan white'
     assert tst_phone.ram_on_board == '256'
+
+
+@pytest.fixture()
+def tst_mixed_products():
+    return [Product('Iphone 15', '512GB, Gray space', 210_000.0, 1),
+            Product('Xiaomi Redmi Note 11', '1024GB, Синий', 31_000.0, 2),
+            Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 1000, 'Изумруд', 'Россия', '1 месяц'),
+            Grass('Трава2', 'газонная трава, цена за квадратный метр', 9.0, 1300, 'Изумруд', 'Россия', '1 месяц'),
+            Smartphone('IPhone', 'new Iphone 15 Pro', 100_000.0, 1, 'Iphone 15 Pro', 'titan white', 200, '256'),
+            Smartphone('Galaxy 23 Ultra', 'new Samsung Phone', 105_000.0, 1, 'Galaxy 23 Ultra', 'black', 300, '512')]
+
+def test_product_repr(tst_mixed_products):
+    """проверка корректности отработки метода __repr__ в классе MixinLog для класса Product и его наследников"""
+
+    assert repr(tst_mixed_products[1]) == 'Объект класса  Product: Xiaomi Redmi Note 11, 1024GB, Синий, цена: 31000.0 руб., количество: 2'
+    assert repr(tst_mixed_products[3]) == 'Объект класса  Grass: Трава2, газонная трава, цена за квадратный метр, цена: 9.0 руб., количество: 1300'
+    assert repr(tst_mixed_products[5]) == 'Объект класса  Smartphone: Galaxy 23 Ultra, new Samsung Phone, цена: 105000.0 руб., количество: 1'
