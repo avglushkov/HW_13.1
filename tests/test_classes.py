@@ -2,7 +2,7 @@ from src.utils.classes import Category, Product, ProdItereation, Grass, Smartpho
 
 import pytest
 
-
+######## Тестирование класса Category его методов и наследников
 @pytest.fixture()
 def categories():
     """ Задаем для тестов три экземпляра категорий"""
@@ -24,11 +24,13 @@ def test_categories(categories):
     assert Category.categories_amount == 3 # Проверка расчета количества экземпляров класса
     assert Category.category_products_amount == 8 # Проверка корректности расчета количества уникальныех продуктов
 
+### тестирование класса Order его атрибутов, методов и наследников
 def test_order():
     """проверка корректности атрибутов класса Order"""
     prod1 = Order('Нож', 10.0, 34)
     assert prod1.order_product_summ == 340.0
 
+### тестирование класса Product его атрибутов, методов и наследников
 @pytest.fixture()
 def tst_products():
     """Задаем тестовые данные - список продуктов"""
@@ -131,20 +133,6 @@ def test_price(product1):
     assert product1.price == 2500
 
 @pytest.fixture()
-def prod_iteration():
-    return ProdItereation(["Ножи", "Кастрюли", "Сковороды", "Ложки"])
-
-def test_ProdItereation(prod_iteration):
-    products = []
-
-    assert prod_iteration.category == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
-
-    for i in prod_iteration:
-        products.append(i)
-
-    assert products == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
-
-@pytest.fixture()
 
 def tst_grass():
     return Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 1000, 'Изумруд', 'Россия', '1 месяц')
@@ -169,7 +157,7 @@ def test_phone(tst_phone):
 
 
 @pytest.fixture()
-def tst_mixed_products():
+def tst_mixin_products():
     return [Product('Iphone 15', '512GB, Gray space', 210_000.0, 1),
             Product('Xiaomi Redmi Note 11', '1024GB, Синий', 31_000.0, 2),
             Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 1000, 'Изумруд', 'Россия', '1 месяц'),
@@ -177,9 +165,24 @@ def tst_mixed_products():
             Smartphone('IPhone', 'new Iphone 15 Pro', 100_000.0, 1, 'Iphone 15 Pro', 'titan white', 200, '256'),
             Smartphone('Galaxy 23 Ultra', 'new Samsung Phone', 105_000.0, 1, 'Galaxy 23 Ultra', 'black', 300, '512')]
 
-def test_product_repr(tst_mixed_products):
+def test_product_repr(tst_mixin_products):
     """проверка корректности отработки метода __repr__ в классе MixinLog для класса Product и его наследников"""
 
-    assert repr(tst_mixed_products[1]) == 'Объект класса  Product: Xiaomi Redmi Note 11, 1024GB, Синий, цена: 31000.0 руб., количество: 2'
-    assert repr(tst_mixed_products[3]) == 'Объект класса  Grass: Трава2, газонная трава, цена за квадратный метр, цена: 9.0 руб., количество: 1300'
-    assert repr(tst_mixed_products[5]) == 'Объект класса  Smartphone: Galaxy 23 Ultra, new Samsung Phone, цена: 105000.0 руб., количество: 1'
+    assert repr(tst_mixin_products[1]) == 'Объект класса  Product: Xiaomi Redmi Note 11, 1024GB, Синий, цена: 31000.0 руб., количество: 2'
+    assert repr(tst_mixin_products[3]) == 'Объект класса  Grass: Трава2, газонная трава, цена за квадратный метр, цена: 9.0 руб., количество: 1300'
+    assert repr(tst_mixin_products[5]) == 'Объект класса  Smartphone: Galaxy 23 Ultra, new Samsung Phone, цена: 105000.0 руб., количество: 1'
+
+### тестирование класса ProdItereation его атрибутов, методов и наследников
+@pytest.fixture()
+def prod_iteration():
+    return ProdItereation(["Ножи", "Кастрюли", "Сковороды", "Ложки"])
+
+def test_ProdItereation(prod_iteration):
+    products = []
+
+    assert prod_iteration.category == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
+
+    for i in prod_iteration:
+        products.append(i)
+
+    assert products == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
