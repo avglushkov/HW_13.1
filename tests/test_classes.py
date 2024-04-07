@@ -1,4 +1,4 @@
-from src.utils.classes import Category, Product, ProdItereation, Grass, Smartphone, Order
+from src.utils.classes import Category, Product, ProdItereation, Grass, Smartphone, Order, ZeroProductError
 
 import pytest
 
@@ -27,8 +27,10 @@ def test_categories(categories):
 ### тестирование класса Order его атрибутов, методов и наследников
 def test_order():
     """проверка корректности атрибутов класса Order"""
-    prod1 = Order('Нож', 10.0, 34)
+    prod1 = Order('Нож', 10, 34.0)
     assert prod1.order_product_summ == 340.0
+
+
 
 ### тестирование класса Product его атрибутов, методов и наследников
 @pytest.fixture()
@@ -104,6 +106,14 @@ def test_add_new_product(product1):
     assert new_product.product_price == 2500.78
     assert new_product.product_amount == 33
 
+def test_add_new_product_exeption(product1):
+    """проверка метода добавления нового продукта для класса Product"""
+
+    product1.add_new_product({'product_name': 'Нож', 'product_description': 'нож из стали', 'product_price': 2400.78,'product_amount': 16})
+
+    assert product1.add_new_product({'product_name': 'Нож', 'product_description': 'нож из стали', 'product_price': 2500.78,'product_amount': 0}) == None
+
+
 @pytest.fixture()
 def tst_product_category():
     return Category('Колеса',
@@ -111,17 +121,47 @@ def tst_product_category():
                     [Product('Pirelli', "итальянские колеса", 10_000.0, 24),
                      Product("Кама", "Наши колеса", 1_500.0, 4)])
 
-def test_add_product_exeption(tst_product_category):
-    """проверка ошибки добавления некорректного экземпляра"""
+def test_add_product_exeption_wrong_class(tst_product_category):
+    """ проверка ошибки добавления некорректного экземпляра """
 
     tst_cat = tst_product_category
 
     with pytest.raises(ValueError):
         tst_cat.add_product("какой то продукт")
 
-    """проверка корректности добавления в категорию продукта наследованного класса"""
+    #проверка корректности добавления в категорию продукта наследованного класса
 
     assert str(tst_product_category.add_product(Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 1000, 'Изумруд', 'Россия', '1 месяц'))[2]) == 'Продукт Трава1, 7.0 руб. Остаток: 1000 шт.'
+
+
+def test_add_product_exeption_wrong_ammount(tst_product_category):
+    """ проверка ошибки добавления продукта с некорректным количеством - ноль или меньше """
+
+    tst_cat = tst_product_category
+
+    with pytest.raises(ValueError):
+        tst_cat.add_product(Grass('Трава3', 'газонная трава, цена за квадратный метр', 7.0, 0, 'Изумруд', 'Россия', '1 месяц'))
+
+
+def test_average_price(tst_product_category):
+    """ проверка корректности работы метода расчета среднего ценника товаров одной категории """
+
+    tst_cat = tst_product_category
+
+    assert tst_cat.average_price() == 5750.0
+
+@pytest.fixture()
+def tst_product_category_without_products():
+    return Category('Колеса','Колеса для легковых авто',[])
+
+def test_average_price_exeption(tst_product_category_without_products):
+    """ проверка корректности работы метода расчета среднего ценника товаров одной категории """
+
+    tst_cat = tst_product_category_without_products
+
+    assert tst_cat.average_price() == 0
+
+
 
 def test_price(product1):
     """проверяем корректность работы сеттера price для класса Product"""
@@ -186,3 +226,6 @@ def test_ProdItereation(prod_iteration):
         products.append(i)
 
     assert products == ["Ножи", "Кастрюли", "Сковороды", "Ложки"]
+
+
+
