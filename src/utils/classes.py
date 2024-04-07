@@ -13,6 +13,15 @@ class MixinLog:
 
         return (f"Объект класса  {self.__class__.__name__}: {self.product_name}, {self.product_description}, цена: {self.product_price} руб., количество: {self.product_amount}")
 
+class ZeroProductError(Exception):
+    """ Окласс исключения, который отвечает за обработку событий, когда в «Категорию» или в «Заказ» добавляется товар с нулевым количеством """
+
+    def __init__(self, *args, **kwargs):
+        self.message = args[0] if args else 'Количество товаров должно быть не меньше 1'
+
+    def __str__(self):
+        return self.message
+
 class Product(Abs_product, MixinLog):
     """ Задаем класс Product """
     product_name: str
@@ -30,18 +39,14 @@ class Product(Abs_product, MixinLog):
 
 
     def __str__(self):
-        """
-        строковое отображение в виде: Название продукта, 80 руб. Остаток: 15 шт.
-        """
+        """ строковое отображение в виде: Название продукта, 80 руб. Остаток: 15 шт."""
 
         return f'Продукт {self.product_name}, {self.product_price} руб. Остаток: {self.product_amount} шт.'
 
     def __add__(self, other):
-        """
-        возможность складывать объекты между собой таким образом,
-        чтобы результат выполнения сложения двух продуктов был сложением
-        сумм, умноженных на количество на складе
-        """
+        """ возможность складывать объекты между собой таким образом,
+            чтобы результат выполнения сложения двух продуктов был сложением
+            сумм, умноженных на количество на складе """
         prod_class = type(self)
         other_prod_class = type(other)
 
@@ -61,13 +66,29 @@ class Product(Abs_product, MixinLog):
 
         new_product = cls(product["product_name"], product["product_description"], product["product_price"], product["product_amount"])
 
-        for prod in cls.products:
-            if prod.product_name == new_product.product_name:
-                prod.product_amount += new_product.product_amount
-                prod.product_price = max(prod.product_price, new_product.product_price)
-                return prod
-        cls.products.append(new_product)
-        return new_product
+        try:
+            if new_product.product_amount > 0:
+
+                for prod in cls.products:
+                    if prod.product_name == new_product.product_name:
+                        prod.product_amount += new_product.product_amount
+                        prod.product_price = max(prod.product_price, new_product.product_price)
+                        return prod
+                cls.products.append(new_product)
+                return new_product
+            else:
+                raise ZeroProductError()
+
+
+        except ZeroProductError as e:
+            print(e)
+
+        else:
+            print('Новый товар добавлен')
+
+        finally:
+            print('Операция завершена')
+
 
 
     @property
@@ -91,6 +112,8 @@ class Product(Abs_product, MixinLog):
                 print('Цена не изменилась')
         else:
             print("Введеная цена некорректна")
+
+
 
 class Smartphone(Product, MixinLog):
 
@@ -137,16 +160,20 @@ class Category(Abs_Category):
         Category.category_products_amount += len(self._category_products) # количество уникальных продуктов во всех категориях товаров
 
     def add_product(self, product) -> list[Product]:
-        """
-        метод, который принимает на вход объект товара и добавлять его в список
-        """
+        """ метод, который принимает на вход объект товара и добавлять его в список """
+
         if issubclass(type(product), Product):
-#        if isinstance(product, Product):
-            if product not in self._category_products:
-                self._category_products.append(product)
-            return self._category_products
+           if product not in self._category_products:
+
+               if product.product_amount <= 0:
+                   raise ValueError('Количество товара должно быть не меньше одного')
+               else:
+                   self._category_products.append(product)
+                   return self._category_products
         else:
             raise ValueError('Добавляемый объект не является экземпляром класса Product или его наследником')
+
+
     def __str__(self):
         """ Строковое отображение в виде: Название категории, количество продуктов: 200 шт """
 
@@ -162,23 +189,74 @@ class Category(Abs_Category):
                 products.append(str(product))
         return products
 
+
+    def average_price(self):
+
+        """Метод расчета среднего ценника в категории"""
+
+        products_in_category = self._category_products
+        positions = 0
+        summ = 0
+
+        for i in products_in_category:
+            summ += i.product_price
+            positions += 1
+
+        try:
+            result = summ / positions
+            return result
+
+        except ZeroDivisionError:
+            print('Количество товара должно быть не меньше одного')
+            return 0
+
+
+# sts_cat = Category('Колеса',
+#                     'Колеса для легковых авто',
+#                     [Product('Pirelli', "итальянские колеса", 10_000.0, 24),
+#                      Product("Кама", "Наши колеса", 1_500.0, 4)])
+#
+#
+# print(sts_cat.average_price())
+
+
+
+# sts_cat.add_product(Grass('Трава1', 'газонная трава, цена за квадратный метр', 7.0, 0, 'Изумруд', 'Россия', '1 месяц'))
+
 class Order(Abs_Category):
     """Класс Заказа"""
 
-    order_product: str
+    order_product_name: str
     order_product_amount: int
     order_product_price: float
     order_product_summ: float
 
-    def __init__(self, order_product, order_product_amount, order_product_price):
+    def __init__(self, order_product_name, order_product_amount, order_product_price):
 
-        self.order_product = order_product
-        self.order_product_amount = order_product_amount
-        self.order_product_price = order_product_price
-        self.order_product_summ = order_product_price * order_product_amount
+        try:
 
+            if order_product_amount > 0:
 
+                self.order_product_name = order_product_name
+                self.order_product_amount = order_product_amount
+                self.order_product_price = order_product_price
+                self.order_product_summ = order_product_price * order_product_amount
 
+            else:
+                raise ZeroProductError()
+
+        except ZeroProductError as e:
+            print(e)
+
+        else:
+            print('Новый товар добавлен')
+
+        finally:
+            print('Операция завершена')
+
+    def __str__(self):
+
+        return f'{self.order_product_name},{self.order_product_summ}'
 
 
 class ProdItereation:
@@ -206,4 +284,5 @@ class ProdItereation:
             return self.category[self.current_value]
         else:
             raise StopIteration
+
 
